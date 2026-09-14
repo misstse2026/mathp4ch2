@@ -2,8 +2,8 @@
 <html lang="zh-HK">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>小四數學：兩位數乘兩位數直式特工隊（無限隨機題目版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>小四數學：兩位數乘兩位數直式特工隊（iPad 觸控優化版）</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -14,21 +14,23 @@
       background-color: #0f172a;
       color: #f8fafc;
       touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .digit-box {
       font-family: 'Chakra Petch', monospace;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
     }
 
     /* 右上角進位格獨立樣式 */
     .carry-box {
       font-family: 'Chakra Petch', monospace;
       font-weight: 900;
-      font-size: 14px !important;
+      font-size: 15px !important;
       line-height: 1;
-      width: 22px !important;
-      height: 22px !important;
+      width: 24px !important;
+      height: 24px !important;
       transition: all 0.2s ease;
     }
 
@@ -45,8 +47,8 @@
       background-color: #f59e0b !important;
       color: #000000 !important;
       font-weight: 900;
-      transform: scale(1.1);
-      box-shadow: 0 0 18px #f59e0b, 0 0 25px rgba(245, 158, 11, 0.6);
+      transform: scale(1.08);
+      box-shadow: 0 0 18px #f59e0b;
       z-index: 20;
       border-color: #fbbf24 !important;
       animation: pulse-glow 1.2s infinite alternate;
@@ -54,7 +56,7 @@
 
     .highlight-active-input {
       border-color: #38bdf8 !important;
-      box-shadow: 0 0 15px #38bdf8, inset 0 0 10px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 18px #38bdf8, inset 0 0 12px rgba(56, 189, 248, 0.4);
       background-color: #0f172a !important;
       color: #38bdf8 !important;
       animation: border-pulse 1s infinite alternate;
@@ -62,16 +64,16 @@
 
     .highlight-zero-input {
       border-color: #fbbf24 !important;
-      box-shadow: 0 0 18px #fbbf24, inset 0 0 10px rgba(251, 191, 36, 0.5);
+      box-shadow: 0 0 20px #fbbf24, inset 0 0 12px rgba(251, 191, 36, 0.6);
       background-color: #78350f !important;
       color: #fef08a !important;
-      transform: scale(1.08);
+      transform: scale(1.05);
       animation: border-pulse-yellow 1s infinite alternate;
     }
 
     .highlight-carry-input {
       border-color: #ec4899 !important;
-      box-shadow: 0 0 14px #ec4899, inset 0 0 8px rgba(236, 72, 153, 0.6);
+      box-shadow: 0 0 16px #ec4899, inset 0 0 10px rgba(236, 72, 153, 0.7);
       background-color: #831843 !important;
       color: #f472b6 !important;
       transform: scale(1.15);
@@ -87,8 +89,8 @@
     }
 
     @keyframes pulse-glow {
-      0% { transform: scale(1.06); box-shadow: 0 0 12px #f59e0b; }
-      100% { transform: scale(1.12); box-shadow: 0 0 22px #f59e0b, 0 0 35px rgba(245, 158, 11, 0.8); }
+      0% { transform: scale(1.04); box-shadow: 0 0 12px #f59e0b; }
+      100% { transform: scale(1.1); box-shadow: 0 0 22px #f59e0b; }
     }
 
     @keyframes border-pulse {
@@ -106,260 +108,231 @@
       100% { border-color: #f472b6; box-shadow: 0 0 18px #f472b6; }
     }
 
-    .badge-hk {
-      background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
-    }
-
-    .numpad-btn {
+    /* iPad 觸控按鈕專用特化樣式 */
+    .ipad-btn {
       touch-action: manipulation;
-      transition: transform 0.08s ease, background-color 0.15s;
+      transition: all 0.08s ease;
+      -webkit-tap-highlight-color: transparent;
     }
-    .numpad-btn:active {
+    .ipad-btn:active {
       transform: scale(0.92);
+      filter: brightness(1.2);
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 bg-slate-900 text-slate-100 selection:bg-amber-500 selection:text-slate-900">
+<body class="min-h-screen flex flex-col items-center justify-between p-2 sm:p-5 bg-slate-900 text-slate-100">
 
-  <!-- 頂部標題與積分欄 -->
-  <header class="w-full max-w-4xl flex flex-wrap justify-between items-center bg-slate-800/80 backdrop-blur border border-slate-700 p-4 rounded-2xl shadow-xl mb-4">
+  <!-- 頂部列 -->
+  <header class="w-full max-w-5xl flex flex-wrap justify-between items-center bg-slate-800/90 border border-slate-700 p-3 sm:p-4 rounded-2xl shadow-xl mb-3">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/30">
-        <i class="fa-solid fa-calculator"></i>
+        <i class="fa-solid fa-tablet-screen-button"></i>
       </div>
       <div>
-        <h1 class="font-black text-lg sm:text-2xl text-amber-400 tracking-wide flex items-center gap-2">
-          乘法特工隊 <span class="text-xs px-2 py-0.5 rounded-full badge-hk text-white font-normal">無限出題版</span>
+        <h1 class="font-black text-lg sm:text-xl text-amber-400 tracking-wide flex items-center gap-2">
+          乘法特工隊 <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-600 text-white font-normal">iPad 觸控優化版</span>
         </h1>
-        <p class="text-xs text-slate-400">第二層個位乘法進位精準置於十位格右上角！</p>
+        <p class="text-xs text-slate-400">大按鈕設計，直接點擊螢幕輸入答案</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-4 mt-2 sm:mt-0">
+    <div class="flex items-center gap-3 mt-2 sm:mt-0">
       <div class="bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-2">
         <i class="fa-solid fa-trophy text-amber-400 text-sm"></i>
         <span class="text-xs text-slate-400">得分:</span>
-        <span id="score-display" class="font-bold text-amber-400 text-lg">0</span>
+        <span id="score-display" class="font-bold text-amber-400 text-base">0</span>
       </div>
       <div class="bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-2">
         <i class="fa-solid fa-bolt text-cyan-400 text-sm"></i>
         <span class="text-xs text-slate-400">連對:</span>
-        <span id="streak-display" class="font-bold text-cyan-400 text-lg">0</span>
+        <span id="streak-display" class="font-bold text-cyan-400 text-base">0</span>
       </div>
-      <button id="new-game-btn" onclick="initNewGame(false)" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white px-3 py-1.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5">
+      <button onclick="initNewGame(false)" class="ipad-btn bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
         <i class="fa-solid fa-rotate-right"></i> 換題
       </button>
     </div>
   </header>
 
-  <!-- 主要內容區 -->
-  <main class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start my-auto">
+  <!-- 主要內容區 (iPad 雙欄響應式佈局) -->
+  <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-4 items-start my-auto">
 
-    <!-- 左側：步驟引導說明卡 -->
-    <section class="lg:col-span-5 bg-slate-800/60 border border-slate-700/80 rounded-2xl p-5 shadow-2xl backdrop-blur flex flex-col justify-between min-h-[400px]">
-      <div>
-        <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
-          <span id="step-badge" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-xs rounded-full flex items-center gap-1.5">
-            <i class="fa-solid fa-list-check"></i> 載入中...
+    <!-- 左側：題目指引與直式計算表格 -->
+    <section class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col items-center">
+
+      <!-- 步驟引導頂卡 -->
+      <div class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 mb-3">
+        <div class="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-2">
+          <span id="step-badge" class="px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-xs rounded-full">
+            步驟 1
           </span>
-          <span id="mode-badge" class="text-xs text-slate-400 font-medium">香港標準步驟</span>
+          <span id="equation-preview" class="font-mono text-sm font-bold text-amber-400 tracking-wider">
+            <!-- 動態算式 -->
+          </span>
         </div>
-
-        <h2 id="step-title" class="text-lg font-bold text-slate-100 mb-2 flex items-center gap-2">
-          <!-- 動態載入步驟標題 -->
+        <h2 id="step-title" class="text-base font-bold text-slate-100 flex items-center gap-2 mb-1">
+          <!-- 步驟標題 -->
         </h2>
-
-        <div id="step-desc" class="text-sm text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/50 mb-4 min-h-[90px]">
-          <!-- 動態載入詳細步驟指引 -->
-        </div>
-
-        <!-- 即時算式高亮示範卡 -->
-        <div class="bg-slate-950/80 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
-          <span class="text-xs text-slate-400 font-bold">當前聚焦計算：</span>
-          <div id="equation-preview" class="font-mono text-base font-bold text-amber-400 tracking-wider">
-            <!-- 動態顯示計算內容 -->
-          </div>
-        </div>
+        <p id="step-desc" class="text-xs text-slate-300 leading-relaxed">
+          <!-- 步驟指引 -->
+        </p>
       </div>
-
-      <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs text-slate-400">
-        <span class="flex items-center gap-1 text-amber-400 font-medium">
-          <i class="fa-solid fa-star"></i> 個位乘法進位在「十位格」右上角，緊貼個位！
-        </span>
-      </div>
-    </section>
-
-    <!-- 右側：直式計算面板 -->
-    <section class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden">
 
       <!-- 直式表格區 -->
-      <div class="relative py-3 px-4 bg-slate-950/60 rounded-2xl border border-slate-700/80 my-2 min-w-[320px] sm:min-w-[370px]">
+      <div class="relative py-2 px-3 bg-slate-950/70 rounded-2xl border border-slate-700/80 w-full max-w-md">
 
-        <div class="grid grid-cols-5 gap-2 text-center text-xl sm:text-2xl font-bold font-mono items-center">
+        <div class="grid grid-cols-5 gap-1.5 text-center text-xl font-bold font-mono items-center">
 
-          <!-- 欄位位值標籤 -->
-          <div class="text-xs text-slate-500 font-normal py-1">千</div>
-          <div class="text-xs text-slate-500 font-normal py-1">百</div>
-          <div class="text-xs text-slate-500 font-normal py-1">十</div>
-          <div class="text-xs text-slate-500 font-normal py-1">個</div>
-          <div class="text-xs text-slate-500 font-normal py-1"></div>
+          <!-- 位值標籤 -->
+          <div class="text-xs text-slate-500 font-normal py-0.5">千</div>
+          <div class="text-xs text-slate-500 font-normal py-0.5">百</div>
+          <div class="text-xs text-slate-500 font-normal py-0.5">十</div>
+          <div class="text-xs text-slate-500 font-normal py-0.5">個</div>
+          <div class="text-xs text-slate-500 font-normal py-0.5"></div>
 
-          <!-- 題目：被乘數列 -->
+          <!-- 被乘數列 -->
           <div></div>
-          <div class="w-full h-12 flex items-center justify-center">
-            <div class="w-full h-full rounded-lg bg-slate-900/40 border border-slate-800/40"></div>
-          </div>
-          <div class="w-full h-12 flex items-center justify-center">
+          <div class="w-full h-11"></div>
+          <div class="w-full h-11 flex items-center justify-center">
             <div id="top-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
           </div>
-          <div class="w-full h-12 flex items-center justify-center">
+          <div class="w-full h-11 flex items-center justify-center">
             <div id="top-units" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
           </div>
-          <div class="text-xs text-slate-500 font-sans"></div>
+          <div></div>
 
           <!-- 乘數列 -->
           <div class="text-amber-400 font-extrabold flex items-center justify-center">×</div>
           <div></div>
-          <div class="w-full h-12 flex items-center justify-center">
+          <div class="w-full h-11 flex items-center justify-center">
             <div id="bottom-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
           </div>
-          <div class="w-full h-12 flex items-center justify-center">
+          <div class="w-full h-11 flex items-center justify-center">
             <div id="bottom-units" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">7</div>
           </div>
           <div></div>
 
           <!-- 第一條橫線 -->
-          <div class="col-span-5 h-0.5 bg-slate-500 my-1 rounded-full"></div>
+          <div class="col-span-5 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
 
-          <!-- 第一層結果（十位乘積） -->
-          <!-- 千位 -->
-          <div class="relative w-full h-12">
+          <!-- 第一層結果 (十位乘積) -->
+          <div class="relative w-full h-11">
             <input id="c-r1-hundreds" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r1-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 百位 (放置第一層十位乘法的進位 c-r1-tens) -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="c-r1-tens" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r1-hundreds" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 十位 -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="ans-r1-tens" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 個位（補 0 格） -->
-          <div class="w-full h-12">
+          <div class="w-full h-11">
             <input id="ans-r1-units" type="text" readonly class="digit-box w-full h-full text-center rounded-lg zero-pad-box font-black text-2xl focus:outline-none" />
           </div>
-          <div id="lbl-r1" class="text-xs text-slate-500 flex items-center justify-start pl-1 font-sans">×30</div>
+          <div id="lbl-r1" class="text-xs text-slate-400 flex items-center justify-start pl-1 font-sans">×30</div>
 
-          <!-- 第二層結果（個位乘積） -->
-          <!-- 千位 -->
-          <div class="relative w-full h-12">
+          <!-- 第二層結果 (個位乘積) -->
+          <div class="relative w-full h-11">
             <input id="ans-r2-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 百位 (放置第二層十位乘法的進位 c-r2-tens) -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="c-r2-tens" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r2-hundreds" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 十位 (放置第二層個位乘法的進位 c-r2-units，就在十位格右上角) -->
-          <div class="relative w-full h-12">
+          <!-- 第二層個位進位精準置於十位格右上角 -->
+          <div class="relative w-full h-11">
             <input id="c-r2-units" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r2-tens" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-
-          <!-- 個位 -->
-          <div class="w-full h-12">
+          <div class="w-full h-11">
             <input id="ans-r2-units" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-          <div id="lbl-r2" class="text-xs text-slate-500 flex items-center justify-start pl-1 font-sans">×7</div>
+          <div id="lbl-r2" class="text-xs text-slate-400 flex items-center justify-start pl-1 font-sans">×7</div>
 
           <!-- 第二條加法線 -->
-          <div class="col-span-5 h-0.5 bg-slate-500 my-1 rounded-full"></div>
+          <div class="col-span-5 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
 
           <!-- 最終加總結果 -->
-          <!-- 千位加總欄 -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="c-sum-hundreds" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-amber-500/70 text-amber-300 focus:outline-none z-10" />
             <input id="ans-final-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
           </div>
-
-          <!-- 百位加總欄 -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="c-sum-tens" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-amber-500/70 text-amber-300 focus:outline-none z-10" />
             <input id="ans-final-hundreds" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
           </div>
-
-          <!-- 十位加總欄 -->
-          <div class="relative w-full h-12">
+          <div class="relative w-full h-11">
             <input id="c-sum-units" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-amber-500/70 text-amber-300 focus:outline-none z-10" />
             <input id="ans-final-tens" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
           </div>
-
-          <!-- 個位加總欄 -->
-          <div class="w-full h-12">
+          <div class="w-full h-11">
             <input id="ans-final-units" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
           </div>
-          <div class="text-xs text-emerald-500 flex items-center justify-start pl-1 font-sans font-bold">加總</div>
+          <div class="text-xs text-emerald-400 font-bold flex items-center justify-start pl-1">加總</div>
 
         </div>
       </div>
+    </section>
 
-      <!-- 螢幕數字鍵盤區 -->
-      <div class="w-full max-w-xs mt-3 grid grid-cols-3 gap-2">
-        <button onclick="pressNum('1')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">1</button>
-        <button onclick="pressNum('2')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">2</button>
-        <button onclick="pressNum('3')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">3</button>
-        <button onclick="pressNum('4')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">4</button>
-        <button onclick="pressNum('5')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">5</button>
-        <button onclick="pressNum('6')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">6</button>
-        <button onclick="pressNum('7')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">7</button>
-        <button onclick="pressNum('8')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">8</button>
-        <button onclick="pressNum('9')" class="numpad-btn bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 rounded-xl border border-slate-600 text-lg shadow">9</button>
-        <button onclick="pressNum('0')" class="numpad-btn bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl border border-amber-400 text-lg shadow col-span-2">0 (補位靈魂)</button>
-        <button onclick="pressBackspace()" class="numpad-btn bg-rose-600/80 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl border border-rose-500 text-base shadow flex items-center justify-center">
-          <i class="fa-solid fa-delete-left"></i>
-        </button>
+    <!-- 右側：iPad 大按鈕專用螢幕數字鍵盤 -->
+    <section class="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col justify-center items-center h-full">
+      <div class="w-full text-center mb-2">
+        <span class="text-xs text-slate-400 font-bold"><i class="fa-solid fa-hand-pointer text-amber-400"></i> 請直接點擊下方按鈕輸入答案</span>
       </div>
 
+      <!-- 專為 iPad 觸控優化的大鍵盤 (4x3 Grid) -->
+      <div class="w-full max-w-xs grid grid-cols-3 gap-3">
+        <button onclick="pressNum('1')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">1</button>
+        <button onclick="pressNum('2')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">2</button>
+        <button onclick="pressNum('3')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">3</button>
+        
+        <button onclick="pressNum('4')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">4</button>
+        <button onclick="pressNum('5')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">5</button>
+        <button onclick="pressNum('6')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">6</button>
+        
+        <button onclick="pressNum('7')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">7</button>
+        <button onclick="pressNum('8')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">8</button>
+        <button onclick="pressNum('9')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">9</button>
+
+        <!-- 獨立寬體 0 按鈕與刪除鍵 -->
+        <button onclick="pressNum('0')" class="ipad-btn bg-amber-500 hover:bg-amber-400 text-slate-950 font-black h-16 rounded-2xl border-2 border-amber-400 text-2xl shadow-lg col-span-2 flex items-center justify-center gap-2 active:bg-amber-300">
+          <span>0</span> <span class="text-xs font-normal bg-slate-950/20 px-2 py-0.5 rounded-md text-slate-900">補位零</span>
+        </button>
+        <button onclick="pressBackspace()" class="ipad-btn bg-rose-600 hover:bg-rose-500 text-white font-bold h-16 rounded-2xl border-2 border-rose-500 text-xl shadow-lg flex items-center justify-center active:bg-rose-400">
+          <i class="fa-solid fa-delete-left text-2xl"></i>
+        </button>
+      </div>
     </section>
   </main>
 
-  <!-- 成功通關彈窗模態框 -->
+  <!-- 成功通關彈窗 -->
   <div id="success-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-    <div class="bg-slate-800 border-2 border-amber-400 rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl transform transition-all scale-95 opacity-0" id="modal-card">
-      <div class="w-20 h-20 bg-amber-500 rounded-full flex items-center justify-center text-slate-950 text-4xl font-black mx-auto mb-4 shadow-lg shadow-amber-500/40 animate-bounce">
+    <div class="bg-slate-800 border-2 border-amber-400 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl transform transition-all scale-95 opacity-0" id="modal-card">
+      <div class="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center text-slate-950 text-3xl font-black mx-auto mb-3 shadow-lg shadow-amber-500/40 animate-bounce">
         <i class="fa-solid fa-trophy"></i>
       </div>
       <h3 class="text-2xl font-black text-amber-400 mb-1">任務解鎖成功！</h3>
-      <p class="text-sm text-slate-300 mb-4">你已完美掌握正確的位值進位觀念！</p>
+      <p class="text-xs text-slate-300 mb-4">iPad 觀念挑戰成功！位值概念非常清晰！</p>
 
-      <div class="bg-slate-900 rounded-2xl p-4 border border-slate-700 mb-6 text-left space-y-2">
-        <div class="flex justify-between text-sm">
+      <div class="bg-slate-900 rounded-xl p-3 border border-slate-700 mb-5 text-left space-y-1.5">
+        <div class="flex justify-between text-xs">
           <span class="text-slate-400">完成題目：</span>
           <span id="modal-equation" class="font-mono font-bold text-slate-200">33 × 37 = 1221</span>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-slate-400">當前總分：</span>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">當前獲得得分：</span>
           <span id="modal-score" class="font-bold text-amber-400">+100</span>
         </div>
       </div>
 
-      <button onclick="initNewGame(false)" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-3 rounded-xl shadow-lg shadow-amber-500/30 transition text-lg active:scale-95">
+      <button onclick="initNewGame(false)" class="ipad-btn w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl shadow-lg transition text-base">
         挑戰下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
       </button>
     </div>
   </div>
 
   <script>
-    let topNum = 33;
-    let bottomNum = 37;
-
+    let topNum = 33, bottomNum = 37;
     let topTens = 3, topUnits = 3;
     let bottomTens = 3, bottomUnits = 7;
 
@@ -368,23 +341,18 @@
     let score = 0;
     let streak = 0;
 
-    // isFirstLoad 預設載入 33x37，之後全部隨機生成新題目
     function initNewGame(isFirstLoad = false) {
       document.getElementById('success-modal').classList.add('hidden');
 
       if (isFirstLoad) {
-        topNum = 33;
-        bottomNum = 37;
+        topNum = 33; bottomNum = 37;
       } else {
-        // 隨機生成 12~99 之間的兩位數，且個位/十位儘量有進位練習
-        topNum = Math.floor(Math.random() * 88) + 12;      // 12 - 99
-        bottomNum = Math.floor(Math.random() * 88) + 12;   // 12 - 99
+        topNum = Math.floor(Math.random() * 88) + 12;      
+        bottomNum = Math.floor(Math.random() * 88) + 12;   
       }
 
-      topTens = Math.floor(topNum / 10);
-      topUnits = topNum % 10;
-      bottomTens = Math.floor(bottomNum / 10);
-      bottomUnits = bottomNum % 10;
+      topTens = Math.floor(topNum / 10); topUnits = topNum % 10;
+      bottomTens = Math.floor(bottomNum / 10); bottomUnits = bottomNum % 10;
 
       document.getElementById('top-tens').innerText = topTens;
       document.getElementById('top-units').innerText = topUnits;
@@ -394,7 +362,6 @@
       document.getElementById('lbl-r1').innerText = `×${bottomTens*10}`;
       document.getElementById('lbl-r2').innerText = `×${bottomUnits}`;
 
-      // 清空所有輸入框與預設樣式
       const inputs = document.querySelectorAll('input');
       inputs.forEach(input => {
         input.value = '';
@@ -415,19 +382,18 @@
     function buildStepsSequence() {
       stepsSequence = [];
 
-      // --- 第一層計算 (乘數十位 bottomTens * 10) ---
+      // --- 第一層 (十位乘積) ---
       stepsSequence.push({
         id: 'STEP_R1_ZERO',
         inputElId: 'ans-r1-units',
         expected: 0,
-        title: '關鍵第一步：十位乘法，先在個位「補 0」！',
-        desc: `乘數是 ${bottomNum}，十位的「${bottomTens}」代表 ${bottomTens*10}。乘以十位數時，請務必先在個位填入「0」！`,
+        title: '關鍵第一步：乘以十位數先「補 0」',
+        desc: `乘數是 ${bottomNum}，十位「${bottomTens}」代表 ${bottomTens*10}。先在個位填入「0」！`,
         eq: `${topNum} × ${bottomTens*10} ➔ 個位先補 0`,
         targets: ['bottom-tens'],
         isZeroStep: true
       });
 
-      // 1. 十位 × 個位
       const p1_units_val = bottomTens * topUnits;
       const c1_tens = Math.floor(p1_units_val / 10); 
       const ans1_tens = p1_units_val % 10;           
@@ -435,7 +401,7 @@
       if (c1_tens > 0) {
         stepsSequence.push({
           id: 'STEP_C1_TENS',
-          inputElId: 'c-r1-tens', // 百位右上角
+          inputElId: 'c-r1-tens',
           expected: c1_tens,
           title: `第一層進位：${bottomTens} × ${topUnits} = ${p1_units_val}`,
           desc: `【${bottomTens}】×【${topUnits}】= ${p1_units_val}。把進位【${c1_tens}】填入「百位」右上角小格。`,
@@ -454,7 +420,6 @@
         targets: ['bottom-tens', 'top-units']
       });
 
-      // 2. 十位 × 十位
       const p1_tens_val = bottomTens * topTens + c1_tens;
       const c1_hundreds = Math.floor(p1_tens_val / 10);
       const ans1_hundreds = p1_tens_val % 10;
@@ -496,19 +461,19 @@
         });
       }
 
-      // --- 第二層計算 (乘數個位 bottomUnits × 被乘數) ---
+      // --- 第二層 (個位乘積) ---
       const p2_units_val = bottomUnits * topUnits;
       const c2_units = Math.floor(p2_units_val / 10);
       const ans2_units = p2_units_val % 10;
 
-      // 個位乘法的進位 (c2_units) 精準放在第二層「十位格 (ans-r2-tens)」右上角！
+      // 個位乘法的進位 (c2_units) 精準放在第二層十位格右上角！
       if (c2_units > 0) {
         stepsSequence.push({
           id: 'STEP_C2_UNITS',
-          inputElId: 'c-r2-units', // 精準放在十位格右上角！
+          inputElId: 'c-r2-units',
           expected: c2_units,
           title: `第二層個位進位：${bottomUnits} × ${topUnits} = ${p2_units_val}`,
-          desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}。請把進位【${c2_units}】填入「十位格」右上角的小格！`,
+          desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}。進位【${c2_units}】填入「十位格」右上角小格！`,
           eq: `${bottomUnits} × ${topUnits} = ${p2_units_val} ➔ 向十位進 ${c2_units}`,
           targets: ['bottom-units', 'top-units']
         });
@@ -519,12 +484,11 @@
         inputElId: 'ans-r2-units',
         expected: ans2_units,
         title: `算第二層個位：${bottomUnits} × ${topUnits}`,
-        desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}，把數字【${ans2_units}】填入第二層個位。`,
+        desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}，數字【${ans2_units}】填入第二層個位。`,
         eq: `${bottomUnits} × ${topUnits} ➔ 寫 ${ans2_units}`,
         targets: ['bottom-units', 'top-units']
       });
 
-      // 第二層十位計算
       const p2_tens_val = bottomUnits * topTens + c2_units;
       const c2_tens = Math.floor(p2_tens_val / 10);
       const ans2_tens = p2_tens_val % 10;
@@ -532,11 +496,11 @@
       if (c2_tens > 0) {
         stepsSequence.push({
           id: 'STEP_C2_TENS',
-          inputElId: 'c-r2-tens', // 放在百位格右上角
+          inputElId: 'c-r2-tens',
           expected: c2_tens,
           title: `第二層十位進位：${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ 進位'+c2_units : ''}`,
           desc: `【${bottomUnits}】×【${topTens}】${c2_units > 0 ? `+ 進位${c2_units}` : ''} = ${p2_tens_val}。進位【${c2_tens}】填入第二層「百位」右上角。`,
-          eq: `${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ '+c2_units : ''} = ${p2_tens_val} ➔ 向百位進 ${c2_tens}`,
+          eq: `${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ '+c2_units : ''} = ${p2_tens_val}`,
           targets: ['bottom-units', 'top-tens'],
           usedCarryId: c2_units > 0 ? 'c-r2-units' : null
         });
@@ -559,7 +523,7 @@
           inputElId: 'ans-r2-hundreds',
           expected: c2_tens,
           title: `完成第二層：百位數字填上`,
-          desc: `十位乘法滿十產生的進位【${c2_tens}】直接填入第二層百位格！`,
+          desc: `進位【${c2_tens}】直接填入第二層百位格！`,
           eq: `百位 ➔ 寫 ${c2_tens}`,
           targets: [],
           usedCarryId: 'c-r2-tens'
@@ -579,7 +543,6 @@
       const r2_t = Math.floor((r2_val % 100) / 10);
       const r2_h = Math.floor((r2_val % 1000) / 100);
 
-      // 1. 加法個位
       const sum_u = r1_u + r2_u;
       const c_sum_u = Math.floor(sum_u / 10);
       const ans_sum_u = sum_u % 10;
@@ -590,7 +553,7 @@
           inputElId: 'c-sum-units',
           expected: c_sum_u,
           title: `加總進位：個位相加 = ${sum_u}`,
-          desc: `【${r1_u}】+【${r2_u}】= ${sum_u}。滿十了！請把進位【${c_sum_u}】填入十位右上角。`,
+          desc: `【${r1_u}】+【${r2_u}】= ${sum_u}。進位【${c_sum_u}】填入十位右上角。`,
           eq: `${r1_u} + ${r2_u} = ${sum_u}`,
           targets: ['ans-r1-units', 'ans-r2-units']
         });
@@ -606,7 +569,6 @@
         targets: ['ans-r1-units', 'ans-r2-units']
       });
 
-      // 2. 加法十位
       const sum_t = r1_t + r2_t + c_sum_u;
       const c_sum_t = Math.floor(sum_t / 10);
       const ans_sum_t = sum_t % 10;
@@ -617,7 +579,7 @@
           inputElId: 'c-sum-tens',
           expected: c_sum_t,
           title: `加總進位：十位相加 = ${sum_t}`,
-          desc: `十位：${r1_t} + ${r2_t} ${c_sum_u > 0 ? '+ 進位'+c_sum_u : ''} = ${sum_t}。滿十！把進位【${c_sum_t}】填入百位右上角。`,
+          desc: `十位：${r1_t} + ${r2_t} ${c_sum_u > 0 ? '+ 進位'+c_sum_u : ''} = ${sum_t}。進位【${c_sum_t}】填入百位右上角。`,
           eq: `${r1_t} + ${r2_t} = ${sum_t}`,
           targets: ['ans-r1-tens', 'ans-r2-tens'],
           usedCarryId: c_sum_u > 0 ? 'c-sum-units' : null
@@ -635,7 +597,6 @@
         usedCarryId: c_sum_u > 0 ? 'c-sum-units' : null
       });
 
-      // 3. 加法百位
       const sum_h = r1_h + r2_h + c_sum_t;
       const c_sum_h = Math.floor(sum_h / 10);
       const ans_sum_h = sum_h % 10;
@@ -664,7 +625,6 @@
         usedCarryId: c_sum_t > 0 ? 'c-sum-tens' : null
       });
 
-      // 4. 加法千位
       const ans_sum_th = Math.floor(total / 1000);
       if (ans_sum_th > 0) {
         stepsSequence.push({
@@ -672,7 +632,7 @@
           inputElId: 'ans-final-thousands',
           expected: ans_sum_th,
           title: '加總最後一步：千位填寫',
-          desc: `千位結果【${ans_sum_th}】填入最終答案千位欄！`,
+          desc: `千位結果【${ans_sum_th}】填入千位欄！`,
           eq: `千位 ➔ 寫 ${ans_sum_th}`,
           targets: ['ans-r1-thousands', 'ans-r2-thousands'],
           usedCarryId: c_sum_h > 0 ? 'c-sum-hundreds' : null
@@ -712,7 +672,7 @@
         targetInput.classList.add('border-rose-500', 'bg-rose-950/80');
         setTimeout(() => {
           targetInput.classList.remove('border-rose-500', 'bg-rose-950/80');
-        }, 600);
+        }, 500);
       }
     }
 
@@ -731,8 +691,8 @@
 
       const currentStep = stepsSequence[currentStepIdx];
 
-      document.getElementById('step-badge').innerHTML = `<i class="fa-solid fa-list-check"></i> 步驟 ${currentStepIdx + 1} / ${stepsSequence.length}`;
-      document.getElementById('step-title').innerHTML = `<i class="fa-solid fa-calculator text-amber-400"></i> ${currentStep.title}`;
+      document.getElementById('step-badge').innerText = `步驟 ${currentStepIdx + 1} / ${stepsSequence.length}`;
+      document.getElementById('step-title').innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400"></i> ${currentStep.title}`;
       document.getElementById('step-desc').innerText = currentStep.desc;
       document.getElementById('equation-preview').innerText = currentStep.eq;
 
@@ -780,16 +740,8 @@
       }, 10);
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key >= '0' && e.key <= '9') {
-        pressNum(e.key);
-      } else if (e.key === 'Backspace') {
-        pressBackspace();
-      }
-    });
-
     window.onload = () => {
-      initNewGame(true); // 首次開啟預設載入 33x37，方便對照教學
+      initNewGame(true);
     };
   </script>
 </body>
