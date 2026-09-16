@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>小四數學：兩位數乘兩位數直式特工隊（iPad 觸控優化版）</title>
+  <title>小四數學：直式乘法特工隊（混合題型與思維引導版）</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -23,18 +23,16 @@
       transition: all 0.2s ease;
     }
 
-    /* 右上角進位格獨立樣式 */
     .carry-box {
       font-family: 'Chakra Petch', monospace;
       font-weight: 900;
-      font-size: 15px !important;
+      font-size: 13px !important;
       line-height: 1;
-      width: 24px !important;
-      height: 24px !important;
+      width: 22px !important;
+      height: 22px !important;
       transition: all 0.2s ease;
     }
 
-    /* 補 0 格專用醒目黃/橙色樣式 */
     .zero-pad-box {
       border-color: #f59e0b !important;
       background-color: #451a03 !important;
@@ -42,7 +40,6 @@
       box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
     }
 
-    /* 核心高亮動畫效果 */
     .highlight-target {
       background-color: #f59e0b !important;
       color: #000000 !important;
@@ -88,6 +85,12 @@
       box-shadow: 0 0 12px #ec4899;
     }
 
+    /* 隱藏無用欄位 */
+    .col-hidden {
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
     @keyframes pulse-glow {
       0% { transform: scale(1.04); box-shadow: 0 0 12px #f59e0b; }
       100% { transform: scale(1.1); box-shadow: 0 0 22px #f59e0b; }
@@ -108,7 +111,6 @@
       100% { border-color: #f472b6; box-shadow: 0 0 18px #f472b6; }
     }
 
-    /* iPad 觸控按鈕專用特化樣式 */
     .ipad-btn {
       touch-action: manipulation;
       transition: all 0.08s ease;
@@ -126,13 +128,13 @@
   <header class="w-full max-w-5xl flex flex-wrap justify-between items-center bg-slate-800/90 border border-slate-700 p-3 sm:p-4 rounded-2xl shadow-xl mb-3">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/30">
-        <i class="fa-solid fa-tablet-screen-button"></i>
+        <i class="fa-solid fa-calculator"></i>
       </div>
       <div>
         <h1 class="font-black text-lg sm:text-xl text-amber-400 tracking-wide flex items-center gap-2">
-          乘法特工隊 <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-600 text-white font-normal">iPad 觸控優化版</span>
+          乘法特工隊 <span id="mode-badge" class="text-xs px-2 py-0.5 rounded-full bg-indigo-600 text-white font-normal">混合題型模式</span>
         </h1>
-        <p class="text-xs text-slate-400">大按鈕設計，直接點擊螢幕輸入答案</p>
+        <p class="text-xs text-slate-400">觀察黃色亮起位置，自行運算並填入答案</p>
       </div>
     </div>
 
@@ -153,58 +155,63 @@
     </div>
   </header>
 
-  <!-- 主要內容區 (iPad 雙欄響應式佈局) -->
+  <!-- 主要內容區 -->
   <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-4 items-start my-auto">
 
     <!-- 左側：題目指引與直式計算表格 -->
     <section class="lg:col-span-7 bg-slate-800 border border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col items-center">
 
-      <!-- 步驟引導頂卡 -->
+      <!-- 思考指引卡 (不顯露答案) -->
       <div class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 mb-3">
         <div class="flex items-center justify-between pb-1.5 border-b border-slate-800 mb-2">
           <span id="step-badge" class="px-2.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold text-xs rounded-full">
             步驟 1
           </span>
           <span id="equation-preview" class="font-mono text-sm font-bold text-amber-400 tracking-wider">
-            <!-- 動態算式 -->
+            <!-- 僅顯示目前運算的目標位值 -->
           </span>
         </div>
         <h2 id="step-title" class="text-base font-bold text-slate-100 flex items-center gap-2 mb-1">
-          <!-- 步驟標題 -->
+          <!-- 思考方向 -->
         </h2>
         <p id="step-desc" class="text-xs text-slate-300 leading-relaxed">
-          <!-- 步驟指引 -->
+          <!-- 思考引導提示 -->
         </p>
       </div>
 
       <!-- 直式表格區 -->
-      <div class="relative py-2 px-3 bg-slate-950/70 rounded-2xl border border-slate-700/80 w-full max-w-md">
+      <div class="relative py-2 px-3 bg-slate-950/70 rounded-2xl border border-slate-700/80 w-full max-w-lg">
 
-        <div class="grid grid-cols-5 gap-1.5 text-center text-xl font-bold font-mono items-center">
+        <div class="grid grid-cols-6 gap-1.5 text-center text-xl font-bold font-mono items-center">
 
           <!-- 位值標籤 -->
-          <div class="text-xs text-slate-500 font-normal py-0.5">千</div>
+          <div id="hdr-ten-thousands" class="text-xs text-slate-500 font-normal py-0.5">萬</div>
+          <div id="hdr-thousands" class="text-xs text-slate-500 font-normal py-0.5">千</div>
           <div class="text-xs text-slate-500 font-normal py-0.5">百</div>
           <div class="text-xs text-slate-500 font-normal py-0.5">十</div>
           <div class="text-xs text-slate-500 font-normal py-0.5">個</div>
           <div class="text-xs text-slate-500 font-normal py-0.5"></div>
 
           <!-- 被乘數列 -->
-          <div></div>
-          <div class="w-full h-11"></div>
+          <div id="box-top-ten-thousands"></div>
+          <div id="box-top-thousands"></div>
           <div class="w-full h-11 flex items-center justify-center">
-            <div id="top-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
+            <div id="top-hundreds" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
           </div>
           <div class="w-full h-11 flex items-center justify-center">
-            <div id="top-units" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
+            <div id="top-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">4</div>
+          </div>
+          <div class="w-full h-11 flex items-center justify-center">
+            <div id="top-units" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">5</div>
           </div>
           <div></div>
 
           <!-- 乘數列 -->
           <div class="text-amber-400 font-extrabold flex items-center justify-center">×</div>
           <div></div>
+          <div></div>
           <div class="w-full h-11 flex items-center justify-center">
-            <div id="bottom-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">3</div>
+            <div id="bottom-tens" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">6</div>
           </div>
           <div class="w-full h-11 flex items-center justify-center">
             <div id="bottom-units" class="digit-box w-full h-full rounded-lg bg-slate-800 border border-slate-700 text-slate-100 flex items-center justify-center">7</div>
@@ -212,10 +219,14 @@
           <div></div>
 
           <!-- 第一條橫線 -->
-          <div class="col-span-5 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
+          <div class="col-span-6 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
 
           <!-- 第一層結果 (十位乘積) -->
-          <div class="relative w-full h-11">
+          <div class="relative w-full h-11" id="wrap-r1-ten-thousands">
+            <input id="c-r1-thousands" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
+            <input id="ans-r1-ten-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
+          </div>
+          <div class="relative w-full h-11" id="wrap-r1-thousands">
             <input id="c-r1-hundreds" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r1-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
@@ -229,17 +240,20 @@
           <div class="w-full h-11">
             <input id="ans-r1-units" type="text" readonly class="digit-box w-full h-full text-center rounded-lg zero-pad-box font-black text-2xl focus:outline-none" />
           </div>
-          <div id="lbl-r1" class="text-xs text-slate-400 flex items-center justify-start pl-1 font-sans">×30</div>
+          <div id="lbl-r1" class="text-xs text-slate-400 flex items-center justify-start pl-1 font-sans">×60</div>
 
           <!-- 第二層結果 (個位乘積) -->
-          <div class="relative w-full h-11">
+          <div class="relative w-full h-11" id="wrap-r2-ten-thousands">
+            <input id="ans-r2-ten-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
+          </div>
+          <div class="relative w-full h-11" id="wrap-r2-thousands">
+            <input id="c-r2-hundreds" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r2-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
           <div class="relative w-full h-11">
             <input id="c-r2-tens" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r2-hundreds" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
           </div>
-          <!-- 第二層個位進位精準置於十位格右上角 -->
           <div class="relative w-full h-11">
             <input id="c-r2-units" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-pink-500/60 text-pink-300 focus:outline-none z-10" />
             <input id="ans-r2-tens" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-cyan-300 focus:outline-none" />
@@ -250,10 +264,14 @@
           <div id="lbl-r2" class="text-xs text-slate-400 flex items-center justify-start pl-1 font-sans">×7</div>
 
           <!-- 第二條加法線 -->
-          <div class="col-span-5 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
+          <div class="col-span-6 h-0.5 bg-slate-600 my-0.5 rounded-full"></div>
 
           <!-- 最終加總結果 -->
-          <div class="relative w-full h-11">
+          <div class="relative w-full h-11" id="wrap-final-ten-thousands">
+            <input id="c-sum-thousands" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-amber-500/70 text-amber-300 focus:outline-none z-10" />
+            <input id="ans-final-ten-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
+          </div>
+          <div class="relative w-full h-11" id="wrap-final-thousands">
             <input id="c-sum-hundreds" type="text" readonly class="carry-box absolute top-0.5 right-0.5 text-center rounded bg-slate-900 border border-amber-500/70 text-amber-300 focus:outline-none z-10" />
             <input id="ans-final-thousands" type="text" readonly class="digit-box w-full h-full text-center rounded-lg bg-slate-900 border border-slate-700 text-emerald-400 focus:outline-none" />
           </div>
@@ -274,13 +292,12 @@
       </div>
     </section>
 
-    <!-- 右側：iPad 大按鈕專用螢幕數字鍵盤 -->
+    <!-- 右側：iPad 大按鈕數字鍵盤 -->
     <section class="lg:col-span-5 bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-2xl flex flex-col justify-center items-center h-full">
       <div class="w-full text-center mb-2">
-        <span class="text-xs text-slate-400 font-bold"><i class="fa-solid fa-hand-pointer text-amber-400"></i> 請直接點擊下方按鈕輸入答案</span>
+        <span class="text-xs text-slate-400 font-bold"><i class="fa-solid fa-hand-pointer text-amber-400"></i> 請使用螢幕鍵盤輸入數字</span>
       </div>
 
-      <!-- 專為 iPad 觸控優化的大鍵盤 (4x3 Grid) -->
       <div class="w-full max-w-xs grid grid-cols-3 gap-3">
         <button onclick="pressNum('1')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">1</button>
         <button onclick="pressNum('2')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">2</button>
@@ -294,7 +311,6 @@
         <button onclick="pressNum('8')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">8</button>
         <button onclick="pressNum('9')" class="ipad-btn bg-slate-700 hover:bg-slate-600 text-white font-black h-16 rounded-2xl border-2 border-slate-600 text-2xl shadow-lg active:bg-slate-500">9</button>
 
-        <!-- 獨立寬體 0 按鈕與刪除鍵 -->
         <button onclick="pressNum('0')" class="ipad-btn bg-amber-500 hover:bg-amber-400 text-slate-950 font-black h-16 rounded-2xl border-2 border-amber-400 text-2xl shadow-lg col-span-2 flex items-center justify-center gap-2 active:bg-amber-300">
           <span>0</span> <span class="text-xs font-normal bg-slate-950/20 px-2 py-0.5 rounded-md text-slate-900">補位零</span>
         </button>
@@ -311,16 +327,16 @@
       <div class="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center text-slate-950 text-3xl font-black mx-auto mb-3 shadow-lg shadow-amber-500/40 animate-bounce">
         <i class="fa-solid fa-trophy"></i>
       </div>
-      <h3 class="text-2xl font-black text-amber-400 mb-1">任務解鎖成功！</h3>
-      <p class="text-xs text-slate-300 mb-4">iPad 觀念挑戰成功！位值概念非常清晰！</p>
+      <h3 class="text-2xl font-black text-amber-400 mb-1">計算完成！</h3>
+      <p class="text-xs text-slate-300 mb-4">邏輯清晰，獨立思考挑戰成功！</p>
 
       <div class="bg-slate-900 rounded-xl p-3 border border-slate-700 mb-5 text-left space-y-1.5">
         <div class="flex justify-between text-xs">
           <span class="text-slate-400">完成題目：</span>
-          <span id="modal-equation" class="font-mono font-bold text-slate-200">33 × 37 = 1221</span>
+          <span id="modal-equation" class="font-mono font-bold text-slate-200">345 × 67 = 23115</span>
         </div>
         <div class="flex justify-between text-xs">
-          <span class="text-slate-400">當前獲得得分：</span>
+          <span class="text-slate-400">當前得分：</span>
           <span id="modal-score" class="font-bold text-amber-400">+100</span>
         </div>
       </div>
@@ -332,9 +348,10 @@
   </div>
 
   <script>
-    let topNum = 33, bottomNum = 37;
-    let topTens = 3, topUnits = 3;
-    let bottomTens = 3, bottomUnits = 7;
+    let is3Digit = true;
+    let topNum = 345, bottomNum = 67;
+    let topHundreds = 3, topTens = 4, topUnits = 5;
+    let bottomTens = 6, bottomUnits = 7;
 
     let stepsSequence = [];
     let currentStepIdx = 0;
@@ -345,15 +362,43 @@
       document.getElementById('success-modal').classList.add('hidden');
 
       if (isFirstLoad) {
+        is3Digit = false; // 預設第一題為 2位數×2位數 練習
         topNum = 33; bottomNum = 37;
       } else {
-        topNum = Math.floor(Math.random() * 88) + 12;      
-        bottomNum = Math.floor(Math.random() * 88) + 12;   
+        // 隨機決定題型：50% 機率三位數，50% 機率兩位數
+        is3Digit = Math.random() > 0.5;
+        if (is3Digit) {
+          topNum = Math.floor(Math.random() * 899) + 101; // 101 ~ 999
+        } else {
+          topNum = Math.floor(Math.random() * 88) + 12;   // 12 ~ 99
+        }
+        bottomNum = Math.floor(Math.random() * 88) + 12; // 12 ~ 99
       }
 
-      topTens = Math.floor(topNum / 10); topUnits = topNum % 10;
-      bottomTens = Math.floor(bottomNum / 10); bottomUnits = bottomNum % 10;
+      if (is3Digit) {
+        topHundreds = Math.floor(topNum / 100);
+        topTens = Math.floor((topNum % 100) / 10);
+        topUnits = topNum % 10;
+        document.getElementById('mode-badge').innerText = "三位數 × 兩位數";
+        document.getElementById('mode-badge').className = "text-xs px-2 py-0.5 rounded-full bg-purple-600 text-white font-normal";
+        document.getElementById('top-hundreds').classList.remove('col-hidden');
+        document.getElementById('hdr-ten-thousands').innerText = "萬";
+        document.getElementById('hdr-thousands').innerText = "千";
+      } else {
+        topHundreds = 0;
+        topTens = Math.floor(topNum / 10);
+        topUnits = topNum % 10;
+        document.getElementById('mode-badge').innerText = "兩位數 × 兩位數";
+        document.getElementById('mode-badge').className = "text-xs px-2 py-0.5 rounded-full bg-indigo-600 text-white font-normal";
+        document.getElementById('top-hundreds').classList.add('col-hidden');
+        document.getElementById('hdr-ten-thousands').innerText = "";
+        document.getElementById('hdr-thousands').innerText = "千";
+      }
 
+      bottomTens = Math.floor(bottomNum / 10);
+      bottomUnits = bottomNum % 10;
+
+      document.getElementById('top-hundreds').innerText = is3Digit ? topHundreds : '';
       document.getElementById('top-tens').innerText = topTens;
       document.getElementById('top-units').innerText = topUnits;
       document.getElementById('bottom-tens').innerText = bottomTens;
@@ -361,6 +406,11 @@
 
       document.getElementById('lbl-r1').innerText = `×${bottomTens*10}`;
       document.getElementById('lbl-r2').innerText = `×${bottomUnits}`;
+
+      // 欄位顯示/隱藏控制
+      toggleColumnVisibility('wrap-r1-ten-thousands', is3Digit);
+      toggleColumnVisibility('wrap-r2-ten-thousands', is3Digit);
+      toggleColumnVisibility('wrap-final-ten-thousands', is3Digit || (topNum * bottomNum >= 10000));
 
       const inputs = document.querySelectorAll('input');
       inputs.forEach(input => {
@@ -379,33 +429,40 @@
       updateStepUI();
     }
 
+    function toggleColumnVisibility(id, visible) {
+      const el = document.getElementById(id);
+      if (visible) el.classList.remove('col-hidden');
+      else el.classList.add('col-hidden');
+    }
+
     function buildStepsSequence() {
       stepsSequence = [];
 
-      // --- 第一層 (十位乘積) ---
+      // --- 第一層 (乘以十位數) ---
       stepsSequence.push({
         id: 'STEP_R1_ZERO',
         inputElId: 'ans-r1-units',
         expected: 0,
         title: '關鍵第一步：乘以十位數先「補 0」',
-        desc: `乘數是 ${bottomNum}，十位「${bottomTens}」代表 ${bottomTens*10}。先在個位填入「0」！`,
-        eq: `${topNum} × ${bottomTens*10} ➔ 個位先補 0`,
+        desc: `乘以十位數【${bottomTens}】（代表 ${bottomTens*10}），請先在個位補上「0」。`,
+        eq: `乘以 ${bottomTens*10} ➔ 個位先填 0`,
         targets: ['bottom-tens'],
         isZeroStep: true
       });
 
-      const p1_units_val = bottomTens * topUnits;
-      const c1_tens = Math.floor(p1_units_val / 10); 
-      const ans1_tens = p1_units_val % 10;           
+      // 1. 十位 × 個位
+      const p1_u = bottomTens * topUnits;
+      const c1_t = Math.floor(p1_u / 10); 
+      const a1_t = p1_u % 10;           
 
-      if (c1_tens > 0) {
+      if (c1_t > 0) {
         stepsSequence.push({
           id: 'STEP_C1_TENS',
           inputElId: 'c-r1-tens',
-          expected: c1_tens,
-          title: `第一層進位：${bottomTens} × ${topUnits} = ${p1_units_val}`,
-          desc: `【${bottomTens}】×【${topUnits}】= ${p1_units_val}。把進位【${c1_tens}】填入「百位」右上角小格。`,
-          eq: `${bottomTens} × ${topUnits} = ${p1_units_val} ➔ 向百位進 ${c1_tens}`,
+          expected: c1_t,
+          title: `第一層進位：十位 × 個位`,
+          desc: `計算【${bottomTens}】×【${topUnits}】，若有進位，請將「十位數字」填入百位右上角。`,
+          eq: `${bottomTens} × ${topUnits} ➔ 思考進位`,
           targets: ['bottom-tens', 'top-units']
         });
       }
@@ -413,68 +470,114 @@
       stepsSequence.push({
         id: 'STEP_A1_TENS',
         inputElId: 'ans-r1-tens',
-        expected: ans1_tens,
-        title: `第一層十位：${bottomTens} × ${topUnits}`,
-        desc: `【${bottomTens}】×【${topUnits}】= ${p1_units_val}，個位數【${ans1_tens}】填入第一層十位欄。`,
-        eq: `${bottomTens} × ${topUnits} ➔ 寫 ${ans1_tens}`,
+        expected: a1_t,
+        title: `第一層十位：寫下個位數字`,
+        desc: `計算【${bottomTens}】×【${topUnits}】，將乘積的「個位數字」填入第一層十位格。`,
+        eq: `${bottomTens} × ${topUnits} ➔ 填入個位數`,
         targets: ['bottom-tens', 'top-units']
       });
 
-      const p1_tens_val = bottomTens * topTens + c1_tens;
-      const c1_hundreds = Math.floor(p1_tens_val / 10);
-      const ans1_hundreds = p1_tens_val % 10;
+      // 2. 十位 × 十位
+      const p1_t = bottomTens * topTens + c1_t;
+      const c1_h = Math.floor(p1_t / 10);
+      const a1_h = p1_t % 10;
 
-      if (c1_hundreds > 0) {
+      if (c1_h > 0) {
         stepsSequence.push({
           id: 'STEP_C1_HUNDREDS',
           inputElId: 'c-r1-hundreds',
-          expected: c1_hundreds,
-          title: `第一層百位進位：${bottomTens} × ${topTens} ${c1_tens > 0 ? '+ 進位'+c1_tens : ''}`,
-          desc: `【${bottomTens}】×【${topTens}】${c1_tens > 0 ? `+ 進位${c1_tens}` : ''} = ${p1_tens_val}。把進位【${c1_hundreds}】填入「千位」右上角。`,
-          eq: `${bottomTens} × ${topTens} ${c1_tens > 0 ? '+ '+c1_tens : ''} = ${p1_tens_val}`,
+          expected: c1_h,
+          title: `第一層百位進位：十位 × 十位`,
+          desc: `計算【${bottomTens}】×【${topTens}】${c1_t > 0 ? '加上進位' : ''}，若滿十請將「進位」填入千位右上角。`,
+          eq: `${bottomTens} × ${topTens} ${c1_t > 0 ? '+ 進位' : ''} ➔ 思考進位`,
           targets: ['bottom-tens', 'top-tens'],
-          usedCarryId: c1_tens > 0 ? 'c-r1-tens' : null
+          usedCarryId: c1_t > 0 ? 'c-r1-tens' : null
         });
       }
 
       stepsSequence.push({
         id: 'STEP_A1_HUNDREDS',
         inputElId: 'ans-r1-hundreds',
-        expected: ans1_hundreds,
-        title: `第一層百位：${bottomTens} × ${topTens}`,
-        desc: `填入數字【${ans1_hundreds}】到百位欄。`,
-        eq: `百位 ➔ 寫 ${ans1_hundreds}`,
+        expected: a1_h,
+        title: `第一層百位：寫下結果`,
+        desc: `計算【${bottomTens}】×【${topTens}】${c1_t > 0 ? '加進位' : ''}，填入當前格結果。`,
+        eq: `${bottomTens} × ${topTens} ➔ 填入結果`,
         targets: ['bottom-tens', 'top-tens'],
-        usedCarryId: c1_tens > 0 ? 'c-r1-tens' : null
+        usedCarryId: c1_t > 0 ? 'c-r1-tens' : null
       });
 
-      if (c1_hundreds > 0) {
+      if (is3Digit) {
+        // 3. 十位 × 百位 (僅三位數需要)
+        const p1_h = bottomTens * topHundreds + c1_h;
+        const c1_th = Math.floor(p1_h / 10);
+        const a1_th = p1_h % 10;
+
+        if (c1_th > 0) {
+          stepsSequence.push({
+            id: 'STEP_C1_THOUSANDS',
+            inputElId: 'c-r1-thousands',
+            expected: c1_th,
+            title: `第一層千位進位：十位 × 百位`,
+            desc: `計算【${bottomTens}】×【${topHundreds}】${c1_h > 0 ? '加進位' : ''}，若滿十將「進位」填入萬位右上角。`,
+            eq: `${bottomTens} × ${topHundreds} ➔ 思考進位`,
+            targets: ['bottom-tens', 'top-hundreds'],
+            usedCarryId: c1_h > 0 ? 'c-r1-hundreds' : null
+          });
+        }
+
         stepsSequence.push({
           id: 'STEP_A1_THOUSANDS',
           inputElId: 'ans-r1-thousands',
-          expected: c1_hundreds,
-          title: `第一層千位：填入最高位`,
-          desc: `百位滿十產生的進位【${c1_hundreds}】填入第一層千位格。`,
-          eq: `千位 ➔ 寫 ${c1_hundreds}`,
-          targets: [],
-          usedCarryId: 'c-r1-hundreds'
+          expected: a1_th,
+          title: `第一層千位：寫下結果`,
+          desc: `計算【${bottomTens}】×【${topHundreds}】${c1_h > 0 ? '加進位' : ''}，填入千位格。`,
+          eq: `${bottomTens} × ${topHundreds} ➔ 填入結果`,
+          targets: ['bottom-tens', 'top-hundreds'],
+          usedCarryId: c1_h > 0 ? 'c-r1-hundreds' : null
         });
+
+        if (c1_th > 0) {
+          stepsSequence.push({
+            id: 'STEP_A1_TEN_THOUSANDS',
+            inputElId: 'ans-r1-ten-thousands',
+            expected: c1_th,
+            title: `第一層萬位：寫下最高位`,
+            desc: `將剛才的進位直接填入第一層萬位格。`,
+            eq: `最高位 ➔ 填入進位`,
+            targets: [],
+            usedCarryId: 'c-r1-thousands'
+          });
+        }
+      } else {
+        // 兩位數最高位處理
+        if (c1_h > 0) {
+          stepsSequence.push({
+            id: 'STEP_A1_THOUSANDS',
+            inputElId: 'ans-r1-thousands',
+            expected: c1_h,
+            title: `第一層千位：寫下最高位`,
+            desc: `將百位滿十產生的「進位」直接填入千位格。`,
+            eq: `千位 ➔ 填入進位`,
+            targets: [],
+            usedCarryId: 'c-r1-hundreds'
+          });
+        }
       }
 
-      // --- 第二層 (個位乘積) ---
-      const p2_units_val = bottomUnits * topUnits;
-      const c2_units = Math.floor(p2_units_val / 10);
-      const ans2_units = p2_units_val % 10;
+      // --- 第二層 (乘以個位數) ---
+      // 1. 個位 × 個位
+      const p2_u = bottomUnits * topUnits;
+      const c2_u = Math.floor(p2_u / 10);
+      const a2_u = p2_u % 10;
 
-      // 個位乘法的進位 (c2_units) 精準放在第二層十位格右上角！
-      if (c2_units > 0) {
+      if (c2_u > 0) {
         stepsSequence.push({
           id: 'STEP_C2_UNITS',
           inputElId: 'c-r2-units',
-          expected: c2_units,
-          title: `第二層個位進位：${bottomUnits} × ${topUnits} = ${p2_units_val}`,
-          desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}。進位【${c2_units}】填入「十位格」右上角小格！`,
-          eq: `${bottomUnits} × ${topUnits} = ${p2_units_val} ➔ 向十位進 ${c2_units}`,
+          expected: c2_u,
+          title: `第二層個位進位：個位 × 個位`,
+          desc: `計算【${bottomUnits}】×【${topUnits}】，若有進位填入十位右上角。`,
+          eq: `${bottomUnits} × ${topUnits} ➔ 思考進位`,
           targets: ['bottom-units', 'top-units']
         });
       }
@@ -482,67 +585,117 @@
       stepsSequence.push({
         id: 'STEP_A2_UNITS',
         inputElId: 'ans-r2-units',
-        expected: ans2_units,
-        title: `算第二層個位：${bottomUnits} × ${topUnits}`,
-        desc: `【${bottomUnits}】×【${topUnits}】= ${p2_units_val}，數字【${ans2_units}】填入第二層個位。`,
-        eq: `${bottomUnits} × ${topUnits} ➔ 寫 ${ans2_units}`,
+        expected: a2_u,
+        title: `第二層個位：寫下結果`,
+        desc: `計算【${bottomUnits}】×【${topUnits}】，將「個位數字」填入第二層個位格。`,
+        eq: `${bottomUnits} × ${topUnits} ➔ 填入個位數`,
         targets: ['bottom-units', 'top-units']
       });
 
-      const p2_tens_val = bottomUnits * topTens + c2_units;
-      const c2_tens = Math.floor(p2_tens_val / 10);
-      const ans2_tens = p2_tens_val % 10;
+      // 2. 個位 × 十位
+      const p2_t = bottomUnits * topTens + c2_u;
+      const c2_t = Math.floor(p2_t / 10);
+      const a2_t = p2_t % 10;
 
-      if (c2_tens > 0) {
+      if (c2_t > 0) {
         stepsSequence.push({
           id: 'STEP_C2_TENS',
           inputElId: 'c-r2-tens',
-          expected: c2_tens,
-          title: `第二層十位進位：${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ 進位'+c2_units : ''}`,
-          desc: `【${bottomUnits}】×【${topTens}】${c2_units > 0 ? `+ 進位${c2_units}` : ''} = ${p2_tens_val}。進位【${c2_tens}】填入第二層「百位」右上角。`,
-          eq: `${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ '+c2_units : ''} = ${p2_tens_val}`,
+          expected: c2_t,
+          title: `第二層十位進位：個位 × 十位`,
+          desc: `計算【${bottomUnits}】×【${topTens}】${c2_u > 0 ? '加進位' : ''}，若滿十填入百位右上角。`,
+          eq: `${bottomUnits} × ${topTens} ➔ 思考進位`,
           targets: ['bottom-units', 'top-tens'],
-          usedCarryId: c2_units > 0 ? 'c-r2-units' : null
+          usedCarryId: c2_u > 0 ? 'c-r2-units' : null
         });
       }
 
       stepsSequence.push({
         id: 'STEP_A2_TENS',
         inputElId: 'ans-r2-tens',
-        expected: ans2_tens,
-        title: `算第二層十位：${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ 進位'+c2_units : ''}`,
-        desc: `【${bottomUnits}】×【${topTens}】${c2_units > 0 ? `+ 進位${c2_units}` : ''} = ${p2_tens_val}，填入數字【${ans2_tens}】。`,
-        eq: `${bottomUnits} × ${topTens} ${c2_units > 0 ? '+ '+c2_units : ''} ➔ 寫 ${ans2_tens}`,
+        expected: a2_t,
+        title: `第二層十位：寫下結果`,
+        desc: `計算【${bottomUnits}】×【${topTens}】${c2_u > 0 ? '加進位' : ''}，填入十位格。`,
+        eq: `${bottomUnits} × ${topTens} ➔ 填入結果`,
         targets: ['bottom-units', 'top-tens'],
-        usedCarryId: c2_units > 0 ? 'c-r2-units' : null
+        usedCarryId: c2_u > 0 ? 'c-r2-units' : null
       });
 
-      if (c2_tens > 0) {
+      if (is3Digit) {
+        // 3. 個位 × 百位 (僅三位數需要)
+        const p2_h = bottomUnits * topHundreds + c2_t;
+        const c2_h = Math.floor(p2_h / 10);
+        const a2_h = p2_h % 10;
+
+        if (c2_h > 0) {
+          stepsSequence.push({
+            id: 'STEP_C2_HUNDREDS',
+            inputElId: 'c-r2-hundreds',
+            expected: c2_h,
+            title: `第二層百位進位：個位 × 百位`,
+            desc: `計算【${bottomUnits}】×【${topHundreds}】${c2_t > 0 ? '加進位' : ''}，若滿十填入千位右上角。`,
+            eq: `${bottomUnits} × ${topHundreds} ➔ 思考進位`,
+            targets: ['bottom-units', 'top-hundreds'],
+            usedCarryId: c2_t > 0 ? 'c-r2-tens' : null
+          });
+        }
+
         stepsSequence.push({
           id: 'STEP_A2_HUNDREDS',
           inputElId: 'ans-r2-hundreds',
-          expected: c2_tens,
-          title: `完成第二層：百位數字填上`,
-          desc: `進位【${c2_tens}】直接填入第二層百位格！`,
-          eq: `百位 ➔ 寫 ${c2_tens}`,
-          targets: [],
-          usedCarryId: 'c-r2-tens'
+          expected: a2_h,
+          title: `第二層百位：寫下結果`,
+          desc: `計算【${bottomUnits}】×【${topHundreds}】${c2_t > 0 ? '加進位' : ''}，填入百位格。`,
+          eq: `${bottomUnits} × ${topHundreds} ➔ 填入結果`,
+          targets: ['bottom-units', 'top-hundreds'],
+          usedCarryId: c2_t > 0 ? 'c-r2-tens' : null
         });
+
+        if (c2_h > 0) {
+          stepsSequence.push({
+            id: 'STEP_A2_THOUSANDS',
+            inputElId: 'ans-r2-thousands',
+            expected: c2_h,
+            title: `第二層千位：寫下最高位`,
+            desc: `將百位產生的進位直接填入千位格。`,
+            eq: `千位 ➔ 填入進位`,
+            targets: [],
+            usedCarryId: 'c-r2-hundreds'
+          });
+        }
+      } else {
+        // 兩位數最高位處理
+        if (c2_t > 0) {
+          stepsSequence.push({
+            id: 'STEP_A2_HUNDREDS',
+            inputElId: 'ans-r2-hundreds',
+            expected: c2_t,
+            title: `第二層百位：寫下最高位`,
+            desc: `將十位滿十產生的「進位」直接填入百位格。`,
+            eq: `百位 ➔ 填入進位`,
+            targets: [],
+            usedCarryId: 'c-r2-tens'
+          });
+        }
       }
 
       // --- 第三層：加法區 ---
       const r1_val = topNum * bottomTens * 10;
       const r2_val = topNum * bottomUnits;
-      const total = topNum * bottomNum;
 
       const r1_u = 0;
       const r1_t = Math.floor((r1_val % 100) / 10);
       const r1_h = Math.floor((r1_val % 1000) / 100);
+      const r1_th = Math.floor((r1_val % 10000) / 1000);
+      const r1_tth = Math.floor(r1_val / 10000);
 
       const r2_u = r2_val % 10;
       const r2_t = Math.floor((r2_val % 100) / 10);
       const r2_h = Math.floor((r2_val % 1000) / 100);
+      const r2_th = Math.floor((r2_val % 10000) / 1000);
+      const r2_tth = Math.floor(r2_val / 10000);
 
+      // 個位加總
       const sum_u = r1_u + r2_u;
       const c_sum_u = Math.floor(sum_u / 10);
       const ans_sum_u = sum_u % 10;
@@ -552,9 +705,9 @@
           id: 'STEP_C_SUM_UNITS',
           inputElId: 'c-sum-units',
           expected: c_sum_u,
-          title: `加總進位：個位相加 = ${sum_u}`,
-          desc: `【${r1_u}】+【${r2_u}】= ${sum_u}。進位【${c_sum_u}】填入十位右上角。`,
-          eq: `${r1_u} + ${r2_u} = ${sum_u}`,
+          title: `加總進位：個位相加`,
+          desc: `將兩層的個位相加，若滿十請將「進位」填入十位右上角。`,
+          eq: `個位相加 ➔ 思考進位`,
           targets: ['ans-r1-units', 'ans-r2-units']
         });
       }
@@ -563,12 +716,13 @@
         id: 'STEP_SUM_UNITS',
         inputElId: 'ans-final-units',
         expected: ans_sum_u,
-        title: '加總第一步：個位相加',
-        desc: `個位：${r1_u} + ${r2_u} = ${sum_u}，填入數字【${ans_sum_u}】。`,
-        eq: `${r1_u} + ${r2_u} = ${ans_sum_u}`,
+        title: '加總個位：寫下結果',
+        desc: `將兩層個位相加，填入最終個位數字。`,
+        eq: `個位相加 ➔ 填入結果`,
         targets: ['ans-r1-units', 'ans-r2-units']
       });
 
+      // 十位加總
       const sum_t = r1_t + r2_t + c_sum_u;
       const c_sum_t = Math.floor(sum_t / 10);
       const ans_sum_t = sum_t % 10;
@@ -578,9 +732,9 @@
           id: 'STEP_C_SUM_TENS',
           inputElId: 'c-sum-tens',
           expected: c_sum_t,
-          title: `加總進位：十位相加 = ${sum_t}`,
-          desc: `十位：${r1_t} + ${r2_t} ${c_sum_u > 0 ? '+ 進位'+c_sum_u : ''} = ${sum_t}。進位【${c_sum_t}】填入百位右上角。`,
-          eq: `${r1_t} + ${r2_t} = ${sum_t}`,
+          title: `加總進位：十位相加`,
+          desc: `將兩層十位數字${c_sum_u > 0 ? '加上進位' : ''}相加，若滿十填入百位右上角。`,
+          eq: `十位相加 ➔ 思考進位`,
           targets: ['ans-r1-tens', 'ans-r2-tens'],
           usedCarryId: c_sum_u > 0 ? 'c-sum-units' : null
         });
@@ -590,13 +744,14 @@
         id: 'STEP_SUM_TENS',
         inputElId: 'ans-final-tens',
         expected: ans_sum_t,
-        title: '加總第二步：十位相加',
-        desc: `十位：${r1_t} + ${r2_t} ${c_sum_u > 0 ? '+ 進位'+c_sum_u : ''} = ${sum_t}，填入數字【${ans_sum_t}】。`,
-        eq: `${r1_t} + ${r2_t} = ${ans_sum_t}`,
+        title: '加總十位：寫下結果',
+        desc: `將十位相加${c_sum_u > 0 ? '加上進位' : ''}，填入最終十位數字。`,
+        eq: `十位相加 ➔ 填入結果`,
         targets: ['ans-r1-tens', 'ans-r2-tens'],
         usedCarryId: c_sum_u > 0 ? 'c-sum-units' : null
       });
 
+      // 百位加總
       const sum_h = r1_h + r2_h + c_sum_t;
       const c_sum_h = Math.floor(sum_h / 10);
       const ans_sum_h = sum_h % 10;
@@ -606,9 +761,9 @@
           id: 'STEP_C_SUM_HUNDREDS',
           inputElId: 'c-sum-hundreds',
           expected: c_sum_h,
-          title: `加總進位：百位相加 = ${sum_h}`,
-          desc: `百位：${r1_h} + ${r2_h} ${c_sum_t > 0 ? '+ 進位'+c_sum_t : ''} = ${sum_h}。滿十進位到千位。`,
-          eq: `${r1_h} + ${r2_h} = ${sum_h}`,
+          title: `加總進位：百位相加`,
+          desc: `將百位數字${c_sum_t > 0 ? '加進位' : ''}相加，若滿十填入千位右上角。`,
+          eq: `百位相加 ➔ 思考進位`,
           targets: ['ans-r1-hundreds', 'ans-r2-hundreds'],
           usedCarryId: c_sum_t > 0 ? 'c-sum-tens' : null
         });
@@ -618,24 +773,56 @@
         id: 'STEP_SUM_HUNDREDS',
         inputElId: 'ans-final-hundreds',
         expected: ans_sum_h,
-        title: '加總第三步：百位相加',
-        desc: `百位：${r1_h} + ${r2_h} ${c_sum_t > 0 ? '+ 進位'+c_sum_t : ''} = ${sum_h}，填入數字【${ans_sum_h}】。`,
-        eq: `${r1_h} + ${r2_h} = ${ans_sum_h}`,
+        title: '加總百位：寫下結果',
+        desc: `將百位相加${c_sum_t > 0 ? '加進位' : ''}，填入最終百位數字。`,
+        eq: `百位相加 ➔ 填入結果`,
         targets: ['ans-r1-hundreds', 'ans-r2-hundreds'],
         usedCarryId: c_sum_t > 0 ? 'c-sum-tens' : null
       });
 
-      const ans_sum_th = Math.floor(total / 1000);
-      if (ans_sum_th > 0) {
+      // 千位加總
+      const sum_th = r1_th + r2_th + c_sum_h;
+      const c_sum_th = Math.floor(sum_th / 10);
+      const ans_sum_th = sum_th % 10;
+
+      if (c_sum_th > 0) {
+        stepsSequence.push({
+          id: 'STEP_C_SUM_THOUSANDS',
+          inputElId: 'c-sum-thousands',
+          expected: c_sum_th,
+          title: `加總進位：千位相加`,
+          desc: `將千位數字${c_sum_h > 0 ? '加進位' : ''}相加，若滿十填入萬位右上角。`,
+          eq: `千位相加 ➔ 思考進位`,
+          targets: ['ans-r1-thousands', 'ans-r2-thousands'],
+          usedCarryId: c_sum_h > 0 ? 'c-sum-hundreds' : null
+        });
+      }
+
+      if (is3Digit || sum_th > 0) {
         stepsSequence.push({
           id: 'STEP_SUM_THOUSANDS',
           inputElId: 'ans-final-thousands',
           expected: ans_sum_th,
-          title: '加總最後一步：千位填寫',
-          desc: `千位結果【${ans_sum_th}】填入千位欄！`,
-          eq: `千位 ➔ 寫 ${ans_sum_th}`,
+          title: '加總千位：寫下結果',
+          desc: `將千位相加${c_sum_h > 0 ? '加進位' : ''}，填入千位格。`,
+          eq: `千位相加 ➔ 填入結果`,
           targets: ['ans-r1-thousands', 'ans-r2-thousands'],
           usedCarryId: c_sum_h > 0 ? 'c-sum-hundreds' : null
+        });
+      }
+
+      // 萬位加總
+      const ans_sum_tth = r1_tth + r2_tth + c_sum_th;
+      if (ans_sum_tth > 0) {
+        stepsSequence.push({
+          id: 'STEP_SUM_TEN_THOUSANDS',
+          inputElId: 'ans-final-ten-thousands',
+          expected: ans_sum_tth,
+          title: '加總萬位：最高位結果',
+          desc: `將萬位結果（或千位滿十進位）填入萬位格。`,
+          eq: `萬位 ➔ 填入結果`,
+          targets: ['ans-r1-ten-thousands', 'ans-r2-ten-thousands'],
+          usedCarryId: c_sum_th > 0 ? 'c-sum-thousands' : null
         });
       }
     }
